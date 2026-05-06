@@ -10,7 +10,7 @@ class StudentTodoError(LabError):
 
 
 class AgentExecutionError(LabError):
-    """Raised when an agent fails after retries/fallbacks."""
+    """Raised when an agent or service execution fails."""
 
 
 class ValidationError(LabError):
