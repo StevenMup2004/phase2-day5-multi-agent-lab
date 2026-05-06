@@ -87,3 +87,14 @@ Trade-off summary:
 2. Run each query multiple times and report mean/std latency and cost.
 3. Add human review rubric with blind scoring.
 4. Track failure rate over repeated runs for reliability profiling.
+
+## Failure Mode And Fix (Required Note)
+
+One practical failure mode in this pipeline is transient provider/network
+instability (for example, Tavily TLS timeout or temporary OpenAI connection
+errors), which can break retrieval or generation before the final answer is
+produced. The implemented fix is to keep the system real-provider only (no
+mock fallback output), apply bounded retry with exponential backoff on Tavily
+requests, and fail fast with explicit `AgentExecutionError` when the provider
+is still unavailable. In parallel, LangSmith tracing is enabled so each failed
+step has a trace run ID for fast root-cause diagnosis and re-run.
