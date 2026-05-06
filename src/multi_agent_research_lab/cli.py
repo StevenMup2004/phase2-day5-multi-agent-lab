@@ -93,6 +93,14 @@ def benchmark(
                 user_prompt=q,
             )
             state.final_answer = response.content
+            state.add_trace_event(
+                "baseline.completed",
+                {
+                    "input_tokens": response.input_tokens,
+                    "output_tokens": response.output_tokens,
+                    "cost_usd": response.cost_usd,
+                },
+            )
             return state
 
         def _run_multi(q: str) -> ResearchState:

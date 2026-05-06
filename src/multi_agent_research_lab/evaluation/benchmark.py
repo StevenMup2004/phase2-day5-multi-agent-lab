@@ -43,9 +43,21 @@ def _extract_cost(state: ResearchState) -> float | None:
         cost = item.metadata.get("cost_usd")
         if isinstance(cost, (int, float)):
             costs.append(float(cost))
-    if not costs:
-        return None
-    return sum(costs)
+    if costs:
+        return sum(costs)
+
+    # Baseline runs may store cost in trace payload instead of agent_results.
+    trace_costs: list[float] = []
+    for event in state.trace:
+        payload = event.get("payload", {})
+        if not isinstance(payload, dict):
+            continue
+        cost = payload.get("cost_usd")
+        if isinstance(cost, (int, float)):
+            trace_costs.append(float(cost))
+    if trace_costs:
+        return sum(trace_costs)
+    return None
 
 
 def _heuristic_quality_score(state: ResearchState) -> float:
